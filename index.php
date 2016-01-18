@@ -4,7 +4,7 @@ set_time_limit(120);
 
 require 'Beeper.php';
 
-$arg1 = isset($argv[1]) ? intval($argv[1]) : 0;
+$arg1 = isset($argv[1]) ? strval($argv[1]) : '0';
 
 $beeper = new Beeper();
 
@@ -24,20 +24,33 @@ while (true) {
     }
 }
 
-if ($arg1 == 0) {
-    $freq1 = $freq;
-    $freq2 = $freq;
-} elseif ($arg1 == 1) {
-    $freq1 = $freq;
-    $freq2 = 0;
-} elseif ($arg1 == 2) {
-    $freq1 = 0;
-    $freq2 = $freq;
+$freqs = [];
+if ($arg1[0] === 'n') {
+    $freqs = [0, 0, 0, 0, 0, 0];
+    $str = (string)$arg1;
+    for ($i = 1; $i < strlen($str); $i++) {
+        $n = intval($str[$i]);
+        if ($n >= 1 && $n <= 6) {
+            $freqs[$n - 1] = $freq;
+        }
+    }
+} else {
+    if ($arg1 == 0) {
+        $freq1 = $freq;
+        $freq2 = $freq;
+    } elseif ($arg1 == 1) {
+        $freq1 = $freq;
+        $freq2 = 0;
+    } elseif ($arg1 == 2) {
+        $freq1 = 0;
+        $freq2 = $freq;
+    }
+    $freqs = [$freq1, $freq2, $freq1, $freq2, $freq1, $freq2];
 }
 
-$beeper->beep($freq1, 100, 900);
-$beeper->beep($freq2, 100, 900);
-$beeper->beep($freq1, 100, 900);
-$beeper->beep($freq2, 100, 900);
-$beeper->beep($freq1, 100, 900);
-$beeper->beep($freq2, 100 + $hour * 20);
+$beeper->beep($freqs[0], 100, 900);
+$beeper->beep($freqs[1], 100, 900);
+$beeper->beep($freqs[2], 100, 900);
+$beeper->beep($freqs[3], 100, 900);
+$beeper->beep($freqs[4], 100, 900);
+$beeper->beep($freqs[5], 100 + $hour * 20);
